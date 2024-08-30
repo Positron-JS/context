@@ -76,7 +76,12 @@ public class AssemblyInfo
 
         var hasName = this.Name != null && this.Name.Length > 0;
         if (hasName) {
-            sb.Write($"{this.Name}: ");
+            var name = this.Name;
+            if (this.Type != null)
+            {
+                name = this.Type.GetJSTypeName();
+            }
+            sb.Write($"{name}: ");
         }
         if (this.Type != null) {
             sb.WriteLine($"typeof {this.Type.GetJSType(this.Type.Assembly)};");

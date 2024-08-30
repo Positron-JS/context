@@ -5,7 +5,13 @@ PositronInBrowser.run(function (a) {
         .NeuroSpeech.Positron.Positron;
 
     const essentials = this.clr.assembly("Microsoft.Maui.Essentials");
-    const MediaPicker = essentials.Microsoft.Maui.Media.MediaPicker;
+    const { MediaPicker } = essentials.Microsoft.Maui.Media;
+
+    const graphics = this.clr.assembly("Microsoft.Maui.Graphics");
+
+    const { Colors } = graphics.Microsoft.Maui.Graphics;
+
+    Colors.orange
 
     return Positron.instance.deviceToken;
 })

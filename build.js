@@ -1,5 +1,5 @@
-const { spawnSync } = require('node:child_process');
-const { writeFileSync } = require('node:fs');
+import { spawnSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
 
 function run(name) {
 
@@ -7,10 +7,11 @@ function run(name) {
         "run",
         "--project",
         "./maui/SourceGenerator/SourceGenerator.csproj",
-        "Microsoft.Maui.Essentials"
+        name
     ]).output.filter((x) => x).map((x) => x.toString("utf8")).join("");
 
     writeFileSync(`./src/clr/${name}.ts`, text);
 }
 
 run("Microsoft.Maui.Essentials");
+run("Microsoft.Maui.Graphics");

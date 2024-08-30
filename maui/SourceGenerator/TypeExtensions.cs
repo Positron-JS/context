@@ -13,21 +13,31 @@ internal static class TypeExtensions
     {
         if (type.Namespace?.Length > 0)
         {
-            return type.Namespace + "." + type.Name;
+            return type.Namespace + "." + type.GetJSTypeName();
         }
-        return type.Name;
+        return type.GetJSTypeName();
+    }
+
+    public static string GetJSTypeName(this Type type)
+    {
+        return type.Name.Replace("`", "_");
     }
 
     public static string GetJSType(this Type type, Assembly callingAssembly)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
 
-        if (type.IsGenericType || type.IsConstructedGenericType)
+        if (type.IsGenericTypeDefinition)
+        {
+            return type.GetJSTypeName();
+        }
+
+        if (type.IsGenericTypeParameter || type.ContainsGenericParameters)
         {
             return "any";
         }
 
-        if (type.IsGenericTypeDefinition || type.IsGenericTypeParameter || type.ContainsGenericParameters)
+        if (type.IsByRef || type.IsByRefLike)
         {
             return "any";
         }
