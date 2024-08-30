@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+maui/SourceGenerator/.vs/
+maui/SourceGenerator/obj/
+maui/SourceGenerator/bin/
