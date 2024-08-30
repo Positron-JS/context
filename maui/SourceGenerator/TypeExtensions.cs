@@ -22,6 +22,16 @@ internal static class TypeExtensions
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
 
+        if (type.IsGenericType || type.IsConstructedGenericType)
+        {
+            return "any";
+        }
+
+        if (type.IsGenericTypeDefinition || type.IsGenericTypeParameter || type.ContainsGenericParameters)
+        {
+            return "any";
+        }
+
 
         if (!type.IsEnum)
         {

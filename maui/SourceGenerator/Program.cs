@@ -11,7 +11,7 @@ internal class Program
 
         var generated = Build(input);
 
-        System.IO.File.WriteAllText(input + ".ts", generated);
+        Console.WriteLine(generated);
     }
 
     static string Build(string assemblyName)
@@ -19,13 +19,16 @@ internal class Program
 
         var a = Assembly.Load(assemblyName);
 
-        var classNames = new StringBuilder();
-
-        classNames.AppendLine($"export interface I{assemblyName.Replace(".", "_")} {{");
+        var ai = new AssemblyInfo("");
 
         var sb = new StringBuilder();
 
         foreach(var type in a.GetExportedTypes()) {
+
+            if (type.Namespace == null || type.Namespace.Length == 0)
+            {
+                continue;
+            }
 
             if (type.IsEnum)
             {
@@ -45,11 +48,16 @@ internal class Program
                 continue;
             }
 
+            var ns = ai;
+            foreach(var token in type.Namespace.Split("."))
+            {
+                ns = ns.GetOrCreate(token);
+            }
+            ns.AddType(type);
+
             var fullClassName = type.GetJSType(a);
 
             var extends = "";
-
-            classNames.AppendLine($"\t\"{type.GetNamespaceName()}\": typeof {fullClassName}");
 
             sb.AppendLine($@"
     // {type.GetNamespaceName()}
@@ -83,18 +91,54 @@ internal class Program
                 }
             }
 
+            foreach (var field in type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public))
+            {
+                sb.AppendLine($"\t\t\tstatic {field.Name.ToCamelCase()}: {field.FieldType.GetJSType(a)}");
+            }
+
+
+            foreach (var field in type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
+            {
+                sb.AppendLine($"\t\t\t{field.Name.ToCamelCase()}: {field.FieldType.GetJSType(a)}");
+            }
+
+            foreach (var c in type.GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Public))
+            {
+                sb.AppendLine($"\t\t\tconstructor({ c.GetJSParameters(a)});");
+            }
+
+
+            foreach (var method in type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public))
+            {
+                if (method.IsSpecialName)
+                {
+                    continue;
+                }
+                sb.AppendLine($"\t\t\tstatic {method.Name.ToCamelCase()}({method.GetJSParameters(a)}): {method.ReturnType.GetJSType(a)}");
+            }
+
+
+            foreach (var method in type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
+            {
+                if (method.IsSpecialName)
+                {
+                    continue;
+                }
+                sb.AppendLine($"\t\t\t{method.Name.ToCamelCase()}({method.GetJSParameters(a)}): {method.ReturnType.GetJSType(a)}");
+            }
+
+
             sb.AppendLine($@"
         }}
-
-                ");
+");
         }
 
 
-        classNames.AppendLine("}");
 
         sb.AppendLine();
         sb.AppendLine();
-        sb.AppendLine(classNames.ToString());
+
+        sb.AppendLine(@$"export default interface I{assemblyName.Replace(".", "_")} {ai.ToString()}");
 
         return sb.ToString();
     }
