@@ -1,6 +1,6 @@
 {
   "name": "@positron-js/context",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Positron Context definitions to access CLR inside a positron function",
   "main": "index.js",
   "type": "module",
