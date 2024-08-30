@@ -6,9 +6,9 @@ export default class PositronInBrowser {
 
     static isAvailable = typeof positron !== "undefined";
 
-    static async run<T>(fx: (this: IPositronContext, ... a) => T, ... p: any[]): Promise<T> {
+    static async run<P, T>(a: P, fx: (this: IPositronContext, p: P) => T): Promise<T> {
 
-        return positron.run(fx, ... p);
+        return positron.run(fx, a);
 
     }
 
