@@ -1,6 +1,6 @@
 import PositronInBrowser from "../PositronInBrowser";
 
-PositronInBrowser.run(function (a) {
+PositronInBrowser.run(function () {
     const Positron = this.clr.assembly("NeuroSpeech.Positron")
         .NeuroSpeech.Positron.Positron;
 
