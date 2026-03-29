@@ -6,10 +6,16 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "postversion": "git push --follow-tags"
+    "postversion": "git push --follow-tags",
+    "push": "git add -A && git commit -m \"dep vb\" && npm version patch"
   },
   "repository": {
     "url": "https://github.com/Positron-JS/context.git"
+  },
+  "devDependencies": {
+    "@package-verse/esmpack": "^1.0.35",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
   },
   "author": "",
   "license": "ISC"
